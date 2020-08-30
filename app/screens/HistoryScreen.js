@@ -6,11 +6,13 @@ import {
   View,
   FlatList,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import dataFormat from "dateformat";
 
 import ServerOperation from "../ServerOperation";
+import Colors from "../Colors";
 
 export default function HistoryScreen({
   navigation,
@@ -18,11 +20,14 @@ export default function HistoryScreen({
   setOcrResults,
 }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  // const [ocrResults, setOcrResults] = useState([]);
+  const [showCenterLoading, setShowCenterLoading] = useState(false);
+
   useEffect(() => {
+    setShowCenterLoading(true);
     getData();
     return () => {
       setOcrResults([]);
+      setShowCenterLoading(false);
     };
   }, []);
 
@@ -94,6 +99,7 @@ export default function HistoryScreen({
             String.fromCharCode.apply(null, x.thumbnail.data);
         });
         setOcrResults(res);
+        setShowCenterLoading(false);
       }
     } catch (err) {
       console.log(err);
@@ -103,6 +109,11 @@ export default function HistoryScreen({
 
   return (
     <View styles={styles.mainContainer}>
+      {showCenterLoading ? (
+        <ActivityIndicator style={styles.loading} color={Colors.Primary} />
+      ) : (
+        <></>
+      )}
       <FlatList
         style={{ height: "100%" }}
         data={ocrResults}
@@ -110,7 +121,11 @@ export default function HistoryScreen({
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={getListViewItemSeparator}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.Primary}
+          />
         }
         enableEmptySections={true}
       />
@@ -126,5 +141,15 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 15,
     flexDirection: "row",
+  },
+  loading: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });

@@ -7,9 +7,11 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import ServerOperation from "../ServerOperation";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Colors from "../Colors";
 
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -17,14 +19,19 @@ const imgHeight = deviceHeight * 0.5;
 const contentWidth = deviceWidth * 0.9;
 
 export default function OCRResultScreen({ route, navigation }) {
-  const [base64, setBase64] = useState(/*route.params.base64*/);
+  const [base64, setBase64] = useState(route.params.base64);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    getFullSizeImg();
+    if (!route.params.fullSizeImgReady) {
+      getFullSizeImg();
+    }
     return () => {};
   }, []);
 
   const getFullSizeImg = async () => {
     try {
+      setIsLoading(true);
       let res = await ServerOperation.getFullSizeImg(route.params.id);
       var base64 = "data:image/jpg;base64,";
       var chunk = 8 * 1024;
@@ -37,6 +44,7 @@ export default function OCRResultScreen({ route, navigation }) {
       }
       base64 += String.fromCharCode.apply(null, res.img.data.slice(i * chunk));
       setBase64(base64);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -44,7 +52,19 @@ export default function OCRResultScreen({ route, navigation }) {
 
   return (
     <ScrollView style={styles.mainContainer}>
-      <Image source={{ uri: base64 }} resizeMode="contain" style={styles.img} />
+      <View>
+        {isLoading ? (
+          <ActivityIndicator style={styles.loading} color={Colors.Primary} />
+        ) : (
+          <></>
+        )}
+        <Image
+          source={{ uri: base64 }}
+          resizeMode="contain"
+          style={styles.img}
+        />
+      </View>
+
       <TouchableOpacity
         onPress={() => {
           Clipboard.setString(route.params.text);
@@ -90,5 +110,15 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: contentWidth,
     color: "#808080",
+  },
+  loading: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });

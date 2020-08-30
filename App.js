@@ -70,6 +70,11 @@ export default function App() {
                     />
                   )}
                 </Stack.Screen>
+                <Stack.Screen
+                  name="OCRResult"
+                  component={OCRResultScreen}
+                  options={{ title: "Result" }}
+                />
               </Stack.Navigator>
             )}
           />

@@ -7,6 +7,7 @@ import {
   Modal,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { Button } from "react-native-elements";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,6 +24,7 @@ export default function HomeScreen({ navigation, ocrResults, setOcrResults }) {
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isPhotoReady, setIsPhotoReady] = useState(false);
   const [imgBase64, setImgBase64] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onCapture = (result) => {
     if (result) {
@@ -39,11 +41,17 @@ export default function HomeScreen({ navigation, ocrResults, setOcrResults }) {
   const submitImg = async () => {
     try {
       console.log("submitting image");
+      setIsLoading(true);
       var res = await ServerOperation.processImg(imgBase64);
       res.id = res._id;
       res.base64 = "data:image/jpg;base64," + imgBase64;
       setOcrResults([res].concat(ocrResults));
       console.log("submitted");
+      res.fullSizeImgReady = true;
+      navigation.push("OCRResult", res);
+      setIsLoading(false);
+      setIsPhotoReady(false);
+      setImgBase64(null);
     } catch (err) {
       if (err.response) {
         console.log(err.response.data);
@@ -56,6 +64,15 @@ export default function HomeScreen({ navigation, ocrResults, setOcrResults }) {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.mainContainer}>
+        {isLoading ? (
+          <ActivityIndicator
+            style={styles.loading}
+            size="large"
+            color={Colors.Primary}
+          />
+        ) : (
+          <></>
+        )}
         {!isPhotoReady ? (
           <TouchableOpacity
             activeOpacity={0.6}
@@ -89,16 +106,14 @@ export default function HomeScreen({ navigation, ocrResults, setOcrResults }) {
               <Button
                 title="Retake"
                 buttonStyle={styles.btn}
-                onPress={() => {
-                  // setIsCameraVisible(true)
-                  navigation.navigate("History");
-                  navigation.navigate("OCRResult");
-                }}
+                onPress={() => setIsCameraVisible(true)}
+                disabled={isLoading}
               ></Button>
               <Button
                 title="Submit"
                 buttonStyle={styles.btn}
                 onPress={submitImg}
+                disabled={isLoading}
               ></Button>
             </View>
           </View>
@@ -132,5 +147,15 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: Colors.Secondary,
     paddingHorizontal: 15,
+  },
+  loading: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });
