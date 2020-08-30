@@ -5,8 +5,8 @@ export default class ServerOperation {
   static async processImg(base64) {
     let result = await axios.post(
       Config.API_URI + "/processImg?key=" + Config.API_KEY,
-      base64
-      // { headers: { "Content-Type": "text/plain" } }
+      base64,
+      { headers: { "Content-Type": "text/plain" } }
     );
     return result.data;
   }

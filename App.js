@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState } from "react";
 import { Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,14 +16,6 @@ import Colors from "./app/Colors";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function Home() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-    </Stack.Navigator>
-  );
-}
-
 function History() {
   return (
     <Stack.Navigator>
@@ -38,6 +30,8 @@ function History() {
 }
 
 export default function App() {
+  const [ocrResults, setOcrResults] = useState([]);
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content" />
@@ -63,8 +57,43 @@ export default function App() {
             inactiveTintColor: "gray",
           }}
         >
-          <Tab.Screen name="Home" component={Home} />
-          <Tab.Screen name="History" component={History} />
+          <Tab.Screen
+            name="Home"
+            children={() => (
+              <Stack.Navigator>
+                <Stack.Screen name="Home">
+                  {(props) => (
+                    <HomeScreen
+                      {...props}
+                      ocrResults={ocrResults}
+                      setOcrResults={setOcrResults.bind(this)}
+                    />
+                  )}
+                </Stack.Screen>
+              </Stack.Navigator>
+            )}
+          />
+          <Tab.Screen
+            name="History"
+            children={() => (
+              <Stack.Navigator>
+                <Stack.Screen name="History">
+                  {(props) => (
+                    <HistoryScreen
+                      {...props}
+                      ocrResults={ocrResults}
+                      setOcrResults={setOcrResults.bind(this)}
+                    />
+                  )}
+                </Stack.Screen>
+                <Stack.Screen
+                  name="OCRResult"
+                  component={OCRResultScreen}
+                  options={{ title: "Result" }}
+                />
+              </Stack.Navigator>
+            )}
+          />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

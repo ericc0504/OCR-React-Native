@@ -12,9 +12,13 @@ import dataFormat from "dateformat";
 
 import ServerOperation from "../ServerOperation";
 
-export default function HistoryScreen({ route, navigation }) {
+export default function HistoryScreen({
+  navigation,
+  ocrResults,
+  setOcrResults,
+}) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [ocrResults, setOcrResults] = useState([]);
+  // const [ocrResults, setOcrResults] = useState([]);
   useEffect(() => {
     getData();
     return () => {

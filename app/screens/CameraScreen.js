@@ -22,7 +22,7 @@ export default function CameraScreen(props) {
     if (cameraReady && !capturing) {
       setCapturing(true);
       let image = await camera.current.takePictureAsync({
-        quality: 0.2,
+        quality: 0.5,
         base64: true,
       });
       props.onCapture(image);

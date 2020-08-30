@@ -17,7 +17,7 @@ const imgHeight = deviceHeight * 0.5;
 const contentWidth = deviceWidth * 0.9;
 
 export default function OCRResultScreen({ route, navigation }) {
-  const [base64, setBase64] = useState(route.params.base64);
+  const [base64, setBase64] = useState(/*route.params.base64*/);
   useEffect(() => {
     getFullSizeImg();
     return () => {};

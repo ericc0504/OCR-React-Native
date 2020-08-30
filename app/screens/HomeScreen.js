@@ -19,7 +19,7 @@ import ServerOperation from "../ServerOperation";
 const deviceWidth = Dimensions.get("window").width;
 const imgDimension = deviceWidth * 0.8;
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, ocrResults, setOcrResults }) {
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isPhotoReady, setIsPhotoReady] = useState(false);
   const [imgBase64, setImgBase64] = useState(null);
@@ -40,7 +40,10 @@ export default function HomeScreen({ navigation }) {
     try {
       console.log("submitting image");
       var res = await ServerOperation.processImg(imgBase64);
-      alert("Done!");
+      res.id = res._id;
+      res.base64 = "data:image/jpg;base64," + imgBase64;
+      setOcrResults([res].concat(ocrResults));
+      console.log("submitted");
     } catch (err) {
       if (err.response) {
         console.log(err.response.data);
@@ -86,7 +89,11 @@ export default function HomeScreen({ navigation }) {
               <Button
                 title="Retake"
                 buttonStyle={styles.btn}
-                onPress={() => setIsCameraVisible(true)}
+                onPress={() => {
+                  // setIsCameraVisible(true)
+                  navigation.navigate("History");
+                  navigation.navigate("OCRResult");
+                }}
               ></Button>
               <Button
                 title="Submit"
