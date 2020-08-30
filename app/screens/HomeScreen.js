@@ -14,6 +14,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 import CameraScreen from "./CameraScreen";
 import Colors from "../Colors";
+import ServerOperation from "../ServerOperation";
 
 const deviceWidth = Dimensions.get("window").width;
 const imgDimension = deviceWidth * 0.8;
@@ -33,6 +34,20 @@ export default function HomeScreen({ navigation }) {
 
   const getImgUri = () => {
     return "data:image/jpg;base64," + imgBase64;
+  };
+
+  const submitImg = async () => {
+    try {
+      console.log("submitting image");
+      var res = await ServerOperation.processImg(imgBase64);
+      alert("Done!");
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.data);
+      }
+      console.log(err);
+      alert("Error occurred when submitting image.");
+    }
   };
 
   return (
@@ -73,7 +88,11 @@ export default function HomeScreen({ navigation }) {
                 buttonStyle={styles.btn}
                 onPress={() => setIsCameraVisible(true)}
               ></Button>
-              <Button title="Submit" buttonStyle={styles.btn}></Button>
+              <Button
+                title="Submit"
+                buttonStyle={styles.btn}
+                onPress={submitImg}
+              ></Button>
             </View>
           </View>
         )}

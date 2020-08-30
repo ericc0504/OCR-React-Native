@@ -20,9 +20,9 @@ export default function CameraScreen(props) {
 
   const capture = async () => {
     if (cameraReady && !capturing) {
-      // TODO: Add vibration
       setCapturing(true);
       let image = await camera.current.takePictureAsync({
+        quality: 0.2,
         base64: true,
       });
       props.onCapture(image);
@@ -53,17 +53,26 @@ export default function CameraScreen(props) {
             >
               <Ionicons name="ios-close" size={60} color="white" />
             </TouchableOpacity>
-            <View style={styles.centerPadding} />
-            <TouchableOpacity
+            {/* <View style={styles.centerPadding} /> */}
+            {/* <TouchableOpacity
               activeOpacity={0.3}
               onPress={capture}
               style={[styles.captureBtn]}
             >
               <Ionicons name="ios-radio-button-on" size={80} color="white" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </SafeAreaView>
       </Camera>
+      <View style={{ backgroundColor: "black", paddingBottom: 25 }}>
+        <TouchableOpacity
+          activeOpacity={0.3}
+          onPress={capture}
+          style={[styles.captureBtn]}
+        >
+          <Ionicons name="ios-radio-button-on" size={80} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -80,6 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   captureBtn: {
+    paddingTop: 10,
     alignSelf: "center",
   },
 });

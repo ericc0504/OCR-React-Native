@@ -10,6 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import HomeScreen from "./app/screens/HomeScreen";
 import HistoryScreen from "./app/screens/HistoryScreen";
+import OCRResultScreen from "./app/screens/OCRResultScreen";
 import Colors from "./app/Colors";
 
 const Tab = createBottomTabNavigator();
@@ -27,6 +28,11 @@ function History() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="History" component={HistoryScreen} />
+      <Stack.Screen
+        name="OCRResult"
+        component={OCRResultScreen}
+        options={{ title: "Result" }}
+      />
     </Stack.Navigator>
   );
 }
