@@ -1,6 +1,6 @@
 # OCR Client React Native App
 
-It is a OCR client application, have to work with the server.
+It is a OCR client application, have to work with the [server](https://github.com/ericc0504/ocr-processor).
 
 ## System Architecture
 
