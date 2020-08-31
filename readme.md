@@ -4,7 +4,7 @@ It is a OCR client application, have to work with the server.
 
 ## System Architecture
 
-![System Architecture](SystemArchitecture.png)
+![System Architecture](SystemArchitecture.png =500x)
 
 ## Functions
 
