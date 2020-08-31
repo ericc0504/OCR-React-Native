@@ -13,6 +13,7 @@ import dataFormat from "dateformat";
 
 import ServerOperation from "../ServerOperation";
 import Colors from "../Colors";
+import Utility from "../Utility";
 
 export default function HistoryScreen({
   navigation,
@@ -20,14 +21,11 @@ export default function HistoryScreen({
   setOcrResults,
 }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showCenterLoading, setShowCenterLoading] = useState(false);
 
   useEffect(() => {
-    setShowCenterLoading(true);
     getData();
     return () => {
       setOcrResults([]);
-      setShowCenterLoading(false);
     };
   }, []);
 
@@ -81,25 +79,20 @@ export default function HistoryScreen({
   }
 
   function onRefresh() {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      getData();
-      setIsRefreshing(false);
-    }, 1000);
+    getData();
   }
 
   async function getData() {
     try {
+      setIsRefreshing(true);
       let res = await ServerOperation.getPreviousOcrResult();
       if (res) {
         res.map((x) => {
           x.id = x._id;
-          x.base64 =
-            "data:image/jpg;base64," +
-            String.fromCharCode.apply(null, x.thumbnail.data);
+          x.base64 = Utility.getBase64FromArray(x.thumbnail.data);
         });
         setOcrResults(res);
-        setShowCenterLoading(false);
+        setIsRefreshing(false);
       }
     } catch (err) {
       console.log(err);
@@ -109,11 +102,6 @@ export default function HistoryScreen({
 
   return (
     <View styles={styles.mainContainer}>
-      {showCenterLoading ? (
-        <ActivityIndicator style={styles.loading} color={Colors.Primary} />
-      ) : (
-        <></>
-      )}
       <FlatList
         style={{ height: "100%" }}
         data={ocrResults}

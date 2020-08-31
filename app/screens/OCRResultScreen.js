@@ -11,7 +11,9 @@ import {
 } from "react-native";
 import ServerOperation from "../ServerOperation";
 import { TouchableOpacity } from "react-native-gesture-handler";
+
 import Colors from "../Colors";
+import Utility from "../Utility";
 
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -33,16 +35,7 @@ export default function OCRResultScreen({ route, navigation }) {
     try {
       setIsLoading(true);
       let res = await ServerOperation.getFullSizeImg(route.params.id);
-      var base64 = "data:image/jpg;base64,";
-      var chunk = 8 * 1024;
-      let i;
-      for (i = 0; i < res.img.data.length / chunk; i++) {
-        base64 += String.fromCharCode.apply(
-          null,
-          res.img.data.slice(i * chunk, (i + 1) * chunk)
-        );
-      }
-      base64 += String.fromCharCode.apply(null, res.img.data.slice(i * chunk));
+      var base64 = Utility.getBase64FromArray(res.img.data);
       setBase64(base64);
       setIsLoading(false);
     } catch (err) {
