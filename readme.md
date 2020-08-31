@@ -4,7 +4,7 @@ It is a OCR client application, have to work with the server.
 
 ## System Architecture
 
-![System Architecture](SystemArchitecture.png){:width="500px"}
+![System Architecture](SystemArchitecture.png)
 
 ## Functions
 
